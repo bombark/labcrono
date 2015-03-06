@@ -1,5 +1,9 @@
 package ufpr.labcrono.proj1;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +13,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -34,33 +41,10 @@ public class MainActivity extends Activity {
         body = (LinearLayout) findViewById(R.id.body);
         
         
-        String aux = 
-        		  "{box:["
-        		+ "  {\"class\":\"Text\",    \"title\":\"Qual seu nome?\"},"
-        		+ "  {\"class\":\"Date\",    \"title\":\"Qual sua data de nascimento?\"},"
-        		+ "  {\"class\":\"Text\",    \"title\":\"Qual seu curso?\"},"
-  				+ "  {\"class\":\"Enum\", \"title\":\"Qual é seu sexo?\","
-  				+ "   \"box\":[{title:\"Feminino\"},{title:\"Masculino\"}]"
-  				+ "  },"
-        		+ "  {\"class\":\"Text\",    \"title\":\"Qual seu email?\"},"
-        		+ "  {\"class\":\"Text\",    \"title\":\"Qual seu periodo?\"},"
-        		+ "  {\"class\":\"Boolean\", \"title\":\"Voce trabalha?\"},"
-        		+ "  {\"class\":\"Boolean\", \"title\":\"Atualmente você faz uso contínuo de medicamento?\"},"
-  				+ "  {\"class\":\"Enum\", \"title\":\"Qual é sua mão dominante?\","
-  				+ "   \"box\":[{title:\"Esquerda\"},{title:\"Direita\"}]"
-  				+ "  },"
- 				+ "  {\"class\":\"Boolean\", \"title\":\"Você possui diagnóstico de daltonismo?\"},"
- 				+ "  {\"class\":\"Boolean\", \"title\":\"Em períodos de avaliações na Universidade, você altera seus hábitos de sono?\"},"
- 				+ "  {\"class\":\"Boolean\", \"title\":\"Você possui diagnóstico de daltonismo?\"}"
-        		+ "]}";
-        
+        String aux = this.loadJSONFromAsset("form1.json");     
+        Log.w("log", "aqui");
         this.buildForm(aux);
         
-
-        
-        /*TextView tv2 = new TextView(this);        
-        tv2.setText("1. Qual a sua idade?");        
-        EditText edittext2 = new EditText(this);*/
     }
 
 
@@ -126,7 +110,8 @@ public class MainActivity extends Activity {
     
     
     private void buildTextInput(JSONObject issue) throws JSONException {   	
-        EditText edittext = new EditText(this); 
+        EditText edittext = new EditText(this);
+        edittext.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
         this.body.addView(edittext);
     }
     
@@ -187,6 +172,45 @@ public class MainActivity extends Activity {
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
         }
+    }
+    
+    
+    
+    public String loadJSONFromAsset(String url) {
+        String json = null;
+        try {
+        	File sdcard = Environment.getExternalStorageDirectory();
+        	File fd_json = new File( sdcard,"/ufpr.labcrono.proj1/"+url );
+        	FileInputStream is = new FileInputStream (fd_json);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    	
+    	/*String path = getFilesDir().getAbsolutePath();
+    	Log.w("logs", path );
+    	return "";*/
+    	//return uri.toString();*/
+        
+    	
+        /*try {
+			String[] aux = this.getResources().getAssets().list("../");
+			Log.w("logs", Integer.toString(aux.length) );
+			for (int i=0; i<aux.length; i++)
+				Log.w("logs", aux[i] );
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return "";*/
+    	
     }
     
 }
