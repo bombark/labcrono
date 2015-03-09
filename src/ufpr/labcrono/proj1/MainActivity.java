@@ -131,6 +131,7 @@ public class MainActivity extends Activity {
     private void buildBooleanInput(JSONObject issue) throws JSONException {   	
     	Spinner spinner = new Spinner(this);
     	List<String> list = new ArrayList<String>();
+    	list.add("");
     	list.add("Não");
     	list.add("Sim");
     	ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
