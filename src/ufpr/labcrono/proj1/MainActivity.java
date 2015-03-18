@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -211,11 +212,23 @@ public class MainActivity extends Activity {
         try {
         	File sdcard = Environment.getExternalStorageDirectory();
         	File fd_json = new File( sdcard,"/ufpr.labcrono.proj1/"+url );
-        	FileInputStream is = new FileInputStream (fd_json);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+        	byte[] buffer;
+
+        	if ( fd_json.exists()) {
+            	FileInputStream is = new FileInputStream (fd_json);
+        		int size = is.available();
+            	buffer = new byte[size];
+                is.read(buffer);
+                is.close();        	
+        	} else {
+            	AssetManager manager = this.getAssets();
+            	InputStream is = manager.open("form.json");
+            	int size = is.available();
+            	buffer = new byte[size];
+                is.read(buffer);
+                is.close(); 
+        	}
+        	
             json = new String(buffer, "UTF-8");
         } catch (IOException ex) {
             ex.printStackTrace();
