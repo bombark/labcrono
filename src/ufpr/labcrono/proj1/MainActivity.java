@@ -20,7 +20,9 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,14 +33,35 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	LinearLayout body;
+	JSONObject form;
+	ArrayList<EditText> inputs;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        
+        inputs = new ArrayList<EditText>();
         body = (LinearLayout) findViewById(R.id.body);
+        
+        
+        final Button button = (Button) findViewById(R.id.send);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	 //Toast.makeText(MainActivity.this, "Formulario gravado", Toast.LENGTH_SHORT).show();
+            	 
+            	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
+            	 //myIntent.putExtra("key", value); //Optional parameters
+            	 
+            	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
+            	 startActivity(intent);
+            	 finish();
+            	 
+
+            	 
+            }
+        });
+
         
         
         String aux = this.loadJSONFromAsset("form1.json");     
@@ -73,7 +96,7 @@ public class MainActivity extends Activity {
     private void buildForm(String form_str){
     	try {
 			//JSONObject reader = new JSONObject("teste.json");
-        	JSONObject form = new JSONObject( form_str );
+        	this.form = new JSONObject( form_str );
         	JSONArray box = form.getJSONArray("box");
 
         	for (int i=0; i<box.length(); i++){
@@ -113,12 +136,16 @@ public class MainActivity extends Activity {
         EditText edittext = new EditText(this);
         edittext.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
         this.body.addView(edittext);
+        this.inputs.add(edittext);
+        issue.put( "id", this.inputs.size() );
     }
     
     private void buildIntInput(JSONObject issue) throws JSONException {   	
         EditText edittext = new EditText(this);  
         edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
         this.body.addView(edittext);
+        this.inputs.add(edittext);
+        issue.put( "id", this.inputs.size() );
     }
     
     
@@ -126,6 +153,8 @@ public class MainActivity extends Activity {
         EditText edittext = new EditText(this);  
         edittext.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
         this.body.addView(edittext);
+        this.inputs.add(edittext);
+        issue.put( "id", this.inputs.size() );
     }
     
     private void buildBooleanInput(JSONObject issue) throws JSONException {   	

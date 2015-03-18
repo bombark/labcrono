@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Labcrono</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="thankyou">Muito Obrigado pela sua contribuição</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_finish">Finish</string>
 
 </resources>
