@@ -2,16 +2,20 @@ package ufpr.labcrono.proj1;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -56,9 +60,9 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
             	 //Toast.makeText(MainActivity.this, "Formulario gravado", Toast.LENGTH_SHORT).show();
             	 
+            	 MainActivity.this.saveForm();
+            	
             	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
-            	 //myIntent.putExtra("key", value); //Optional parameters
-            	 
             	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
             	 startActivity(intent);
             	 finish();
@@ -341,4 +345,42 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
     }
+    
+    public void saveForm(){
+    	this.updateForm(this.form);
+    	
+    	FileOutputStream outputStream;
+    	File sdcard = Environment.getExternalStorageDirectory();
+    	File form_folder = new File( sdcard,"/ufpr.labcrono.proj1/result/" );
+    	form_folder.mkdirs();
+    	
+    	File fd_json = new File ( form_folder, this.getNewUserId(sdcard)+".json" );
+    	try {
+			outputStream = new FileOutputStream( fd_json );
+			try {
+				Log.w("log","abriu o arquivo");
+				outputStream.write( this.form_all.toString().getBytes() );
+				outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
+
+    
+    private String getNewUserId(File sdcard){
+    	Random r = new Random();
+    	File file;
+    	String name;
+    	do {
+    		int i1 = r.nextInt(Integer.MAX_VALUE);
+    		name = Integer.toString(i1);     	
+    		file = new File( sdcard,"/ufpr.labcrono.proj1/result/"+name);    	
+    	} while ( file.exists() );
+    	
+    	return name;
+    }
+    
 }
