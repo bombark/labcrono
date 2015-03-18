@@ -1,5 +1,5 @@
 {"box":[
-	{"class":"Text",    "title":"Qual seu nome  ?"},
+	{"class":"Text",    "title":"Qual seu nome?"},
 
 	{"class":"Date",    "title":"Qual sua data de nascimento?"},
 
@@ -19,6 +19,7 @@
 	{"class":"Text",    "title":"Qual seu email?"},
 
 	{"class":"Text", "title":"Em que turnos você estuda na Universidade?"},
+
 
 	{
 		"class":"Boolean", "title":"Voce trabalha?",

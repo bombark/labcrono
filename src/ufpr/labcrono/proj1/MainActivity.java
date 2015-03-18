@@ -17,11 +17,15 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,15 +38,16 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	LinearLayout body;
-	JSONObject form;
-	ArrayList<EditText> inputs;
+	JSONObject form_all;
+	JSONArray form;
+	ArrayList<View> inputs;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        inputs = new ArrayList<EditText>();
+        inputs = new ArrayList<View>();
         body = (LinearLayout) findViewById(R.id.body);
         
         
@@ -63,15 +68,25 @@ public class MainActivity extends Activity {
             }
         });
 
-        
-        
         String aux = this.loadJSONFromAsset("form1.json");     
         Log.w("log", "aqui");
         this.buildForm(aux);
-        
     }
 
-
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v("log", "+ ON RESUME +");
+    }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.updateForm(this.form);
+    }
+    
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,69 +111,87 @@ public class MainActivity extends Activity {
     
     private void buildForm(String form_str){
     	try {
-			//JSONObject reader = new JSONObject("teste.json");
-        	this.form = new JSONObject( form_str );
-        	JSONArray box = form.getJSONArray("box");
-
-        	for (int i=0; i<box.length(); i++){
-        		JSONObject issue = box.getJSONObject(i);
-        		
-        		String classe = issue.getString("class");
-        		String title  = issue.getString("title");
-                TextView tv = new TextView(this);
-                tv.setText(Integer.toString(i+1)+". "+title);
-                body.addView(tv);
-                
-                if ( classe.equals("Int") ){
-                	this.buildIntInput(issue);
-                } else if ( classe.equals("Text") ){
-                	this.buildTextInput(issue);
-                } else if ( classe.equals("Date") ){
-                	this.buildDateInput(issue);
-                } else if ( classe.equals("Boolean") ){
-                	this.buildBooleanInput(issue);
-                } else if ( classe.equals("Enum") ){
-                	this.buildEnumInput(issue);
-                } else {
-                	TextView tv1 = new TextView(this);
-                	tv1.setText("Error: "+classe);
-                    body.addView(tv1);
-                }
-        	}
-            
+        	this.form_all = new JSONObject( form_str );
+        	this.form = form_all.getJSONArray("box");
+        	for (int i=0; i<form.length(); i++){
+        		JSONObject issue = form.getJSONObject(i);
+        		this.buildIssue(issue, Integer.toString(i+1));
+        	} 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-    	
     }
     
     
-    private void buildTextInput(JSONObject issue) throws JSONException {   	
+    private void buildIssue(JSONObject issue, String num){
+ 		try {
+			String classe = issue.getString("class");
+			issue.put( "num", num );
+	        if ( classe.equals("Int") ){
+	        	this.buildIntInput(issue);
+	        } else if ( classe.equals("Text") ){
+	        	this.buildTextInput(issue);
+	        } else if ( classe.equals("Date") ){
+	        	this.buildDateInput(issue);
+	        } else if ( classe.equals("Boolean") ){
+	        	this.buildBooleanInput(issue);
+	        } else if ( classe.equals("Enum") ){
+	        	this.buildEnumInput(issue);
+	        } else {
+	        	TextView tv1 = new TextView(this);
+	        	tv1.setText("Error: "+classe);
+	            body.addView(tv1);
+	        }			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+    }
+    
+    private void buildTitle(JSONObject issue){
+        TextView tv = new TextView(this);
+        try {
+			tv.setText(issue.getString("num")+". "+issue.getString("title"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        body.addView(tv);
+    }
+    
+    
+    private void buildTextInput(JSONObject issue) throws JSONException {
+    	this.buildTitle(issue);
         EditText edittext = new EditText(this);
         edittext.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
-        this.body.addView(edittext);
-        this.inputs.add(edittext);
-        issue.put( "id", this.inputs.size() );
+        if ( issue.has("value") ){
+        	edittext.setText( issue.getInt("value") );
+        }
+        this.addIssueInBody(issue, edittext);
     }
     
-    private void buildIntInput(JSONObject issue) throws JSONException {   	
+    private void buildIntInput(JSONObject issue) throws JSONException {
+    	this.buildTitle(issue);
         EditText edittext = new EditText(this);  
         edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
-        this.body.addView(edittext);
-        this.inputs.add(edittext);
-        issue.put( "id", this.inputs.size() );
+        if ( issue.has("value") ){
+        	edittext.setText( issue.getInt("value") );
+        }
+        this.addIssueInBody(issue, edittext);       
     }
     
     
-    private void buildDateInput(JSONObject issue) throws JSONException {   	
+    private void buildDateInput(JSONObject issue) throws JSONException {
+    	this.buildTitle(issue);
         EditText edittext = new EditText(this);  
         edittext.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
-        this.body.addView(edittext);
-        this.inputs.add(edittext);
-        issue.put( "id", this.inputs.size() );
+        if ( issue.has("value") ){
+        	edittext.setText( issue.getInt("value") );
+        }
+        this.addIssueInBody(issue, edittext);
     }
     
-    private void buildBooleanInput(JSONObject issue) throws JSONException {   	
+    private void buildBooleanInput(JSONObject issue) throws JSONException {
+    	this.buildTitle(issue);
     	Spinner spinner = new Spinner(this);
     	List<String> list = new ArrayList<String>();
     	list.add("");
@@ -167,10 +200,33 @@ public class MainActivity extends Activity {
     	ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
     	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     	spinner.setAdapter(dataAdapter);   	
-        this.body.addView(spinner);
+        
+        this.addIssueInBody(issue, spinner);
+        
+        /* Executa um evento quando um novo item eh selecionado
+         * spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				Log.w("log","item selecionado");
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+        });*/
+        
+        if ( issue.has("box") ){    
+	        String num_base = issue.getString("num");
+	        JSONArray box = issue.getJSONArray("box");
+	        for (int i=0; i<box.length(); i++){
+	    		JSONObject option = box.getJSONObject(i);
+	    		this.buildIssue( option, num_base+"."+Integer.toString(i+1) );
+	        }
+        }
     }
     
-    private void buildEnumInput(JSONObject issue) throws JSONException {   	
+    private void buildEnumInput(JSONObject issue) throws JSONException {
+    	this.buildTitle(issue);
     	Spinner spinner = new Spinner(this);
     	List<String> list = new ArrayList<String>();
 
@@ -183,9 +239,12 @@ public class MainActivity extends Activity {
 
     	ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
     	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    	spinner.setAdapter(dataAdapter);   	
-        this.body.addView(spinner);
+    	spinner.setAdapter(dataAdapter);	
+        
+    	this.addIssueInBody(issue, spinner);
     }
+    
+   
     
     
     
@@ -256,4 +315,30 @@ public class MainActivity extends Activity {
     	
     }
     
+    
+    private void addIssueInBody(JSONObject issue, View view) throws JSONException{
+    	this.body.addView(view);
+        issue.put( "id", this.inputs.size() );
+        this.inputs.add(view);
+    }
+    
+    public void updateForm(JSONArray box){
+		try {
+			for (int i=0; i<box.length(); i++){
+				JSONObject issue = box.getJSONObject(i);
+				if ( issue.has("id") ){
+					String classe = issue.getString("class");
+					if ( classe.equals("Text") || classe.equals("Int") || classe.equals("Date") ){
+						EditText edit  = (EditText) this.inputs.get( issue.getInt("id") );
+						Editable value = edit.getText();
+						//Log.w("log", value.toString() );
+						issue.put("value", value);
+					}
+				}
+			}
+			//Log.w("log",this.form_all.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    }
 }
