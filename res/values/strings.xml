@@ -4,6 +4,7 @@
     <string name="app_name">Labcrono</string>
     <string name="thankyou">Muito Obrigado pela sua contribuição</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_finish">Finish</string>
+    <string name="labcrono">LABCRONO</string>
+    <string name="start">Nova Pesquisa</string>
 
 </resources>

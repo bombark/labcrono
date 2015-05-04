@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.json.JSONArray;
@@ -15,28 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -44,14 +31,14 @@ public class MainActivity extends Activity {
 	LinearLayout body;
 	JSONObject form_all;
 	JSONArray form;
-	ArrayList<View> inputs;
+	ArrayList<Issue> issuepkg;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        inputs = new ArrayList<View>();
+        this.issuepkg = new ArrayList<Issue>();
         body = (LinearLayout) findViewById(R.id.body);
         
         
@@ -61,7 +48,6 @@ public class MainActivity extends Activity {
             	 //Toast.makeText(MainActivity.this, "Formulario gravado", Toast.LENGTH_SHORT).show();
             	 
             	 MainActivity.this.saveForm();
-            	
             	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
             	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
             	 startActivity(intent);
@@ -72,8 +58,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        String aux = this.loadJSONFromAsset("form1.json");     
-        Log.w("log", "aqui");
+        String aux = this.loadJSONFromAsset("form1.json");
         this.buildForm(aux);
     }
 
@@ -87,7 +72,7 @@ public class MainActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        this.updateForm(this.form);
+        this.updateForm();
     }
     
     
@@ -111,6 +96,13 @@ public class MainActivity extends Activity {
     }
     
     
+    
+    
+    
+    
+    
+    
+    
     //getApplicationContext());
     
     private void buildForm(String form_str){
@@ -118,138 +110,17 @@ public class MainActivity extends Activity {
         	this.form_all = new JSONObject( form_str );
         	this.form = form_all.getJSONArray("box");
         	for (int i=0; i<form.length(); i++){
-        		JSONObject issue = form.getJSONObject(i);
-        		this.buildIssue(issue, Integer.toString(i+1));
+        		JSONObject issue_form = form.getJSONObject(i);
+        		issue_form.put( "num", Integer.toString(i+1) );
+        		Issue issue = new Issue(this, this.body, issue_form);
+        		this.issuepkg.add(issue);
         	} 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
     }
     
-    
-    private void buildIssue(JSONObject issue, String num){
- 		try {
-			String classe = issue.getString("class");
-			issue.put( "num", num );
-	        if ( classe.equals("Int") ){
-	        	this.buildIntInput(issue);
-	        } else if ( classe.equals("Text") ){
-	        	this.buildTextInput(issue);
-	        } else if ( classe.equals("Date") ){
-	        	this.buildDateInput(issue);
-	        } else if ( classe.equals("Boolean") ){
-	        	this.buildBooleanInput(issue);
-	        } else if ( classe.equals("Enum") ){
-	        	this.buildEnumInput(issue);
-	        } else {
-	        	TextView tv1 = new TextView(this);
-	        	tv1.setText("Error: "+classe);
-	            body.addView(tv1);
-	        }			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 
-    }
-    
-    private void buildTitle(JSONObject issue){
-        TextView tv = new TextView(this);
-        try {
-			tv.setText(issue.getString("num")+". "+issue.getString("title"));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-        body.addView(tv);
-    }
-    
-    
-    private void buildTextInput(JSONObject issue) throws JSONException {
-    	this.buildTitle(issue);
-        EditText edittext = new EditText(this);
-        edittext.setInputType(InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
-        if ( issue.has("value") ){
-        	edittext.setText( issue.getInt("value") );
-        }
-        this.addIssueInBody(issue, edittext);
-    }
-    
-    private void buildIntInput(JSONObject issue) throws JSONException {
-    	this.buildTitle(issue);
-        EditText edittext = new EditText(this);  
-        edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
-        if ( issue.has("value") ){
-        	edittext.setText( issue.getInt("value") );
-        }
-        this.addIssueInBody(issue, edittext);       
-    }
-    
-    
-    private void buildDateInput(JSONObject issue) throws JSONException {
-    	this.buildTitle(issue);
-        EditText edittext = new EditText(this);  
-        edittext.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
-        if ( issue.has("value") ){
-        	edittext.setText( issue.getInt("value") );
-        }
-        this.addIssueInBody(issue, edittext);
-    }
-    
-    private void buildBooleanInput(JSONObject issue) throws JSONException {
-    	this.buildTitle(issue);
-    	Spinner spinner = new Spinner(this);
-    	List<String> list = new ArrayList<String>();
-    	list.add("");
-    	list.add("Não");
-    	list.add("Sim");
-    	ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
-    	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    	spinner.setAdapter(dataAdapter);   	
-        
-        this.addIssueInBody(issue, spinner);
-        
-        /* Executa um evento quando um novo item eh selecionado
-         * spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				Log.w("log","item selecionado");
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-        });*/
-        
-        if ( issue.has("box") ){    
-	        String num_base = issue.getString("num");
-	        JSONArray box = issue.getJSONArray("box");
-	        for (int i=0; i<box.length(); i++){
-	    		JSONObject option = box.getJSONObject(i);
-	    		this.buildIssue( option, num_base+"."+Integer.toString(i+1) );
-	        }
-        }
-    }
-    
-    private void buildEnumInput(JSONObject issue) throws JSONException {
-    	this.buildTitle(issue);
-    	Spinner spinner = new Spinner(this);
-    	List<String> list = new ArrayList<String>();
-
-    	JSONArray box = issue.getJSONArray("box");
-    	for (int i=0; i<box.length(); i++){
-    		JSONObject option = box.getJSONObject(i);
-    		String     title  = option.getString("title");
-    		list.add( title );
-    	}
-
-    	ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
-    	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    	spinner.setAdapter(dataAdapter);	
-        
-    	this.addIssueInBody(issue, spinner);
-    }
-    
-   
-    
     
     
     
@@ -297,57 +168,19 @@ public class MainActivity extends Activity {
             ex.printStackTrace();
             return null;
         }
-        return json;
-    	
-    	/*String path = getFilesDir().getAbsolutePath();
-    	Log.w("logs", path );
-    	return "";*/
-    	//return uri.toString();*/
-        
-    	
-        /*try {
-			String[] aux = this.getResources().getAssets().list("../");
-			Log.w("logs", Integer.toString(aux.length) );
-			for (int i=0; i<aux.length; i++)
-				Log.w("logs", aux[i] );
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return "";*/
-    	
+        return json;   	
     }
     
+
     
-    private void addIssueInBody(JSONObject issue, View view) throws JSONException{
-    	this.body.addView(view);
-        issue.put( "id", this.inputs.size() );
-        this.inputs.add(view);
-    }
-    
-    public void updateForm(JSONArray box){
-		try {
-			for (int i=0; i<box.length(); i++){
-				JSONObject issue = box.getJSONObject(i);
-				if ( issue.has("id") ){
-					String classe = issue.getString("class");
-					if ( classe.equals("Text") || classe.equals("Int") || classe.equals("Date") ){
-						EditText edit  = (EditText) this.inputs.get( issue.getInt("id") );
-						Editable value = edit.getText();
-						//Log.w("log", value.toString() );
-						issue.put("value", value);
-					}
-				}
-			}
-			//Log.w("log",this.form_all.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
+    public void updateForm(){
+		for (int i=0; i<this.issuepkg.size(); i++){
+			this.issuepkg.get(i).update();
 		}
     }
     
     public void saveForm(){
-    	this.updateForm(this.form);
+    	this.updateForm();
     	
     	FileOutputStream outputStream;
     	File sdcard = Environment.getExternalStorageDirectory();
