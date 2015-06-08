@@ -1,4 +1,4 @@
-{"box":[
+[
 	{"class":"Text",    "title":"Qual seu nome?"},
 
 	{"class":"Date",    "title":"Qual sua data de nascimento?"},
@@ -18,7 +18,7 @@
 
 	{"class":"Text",    "title":"Qual seu email?"},
 
-	{"class":"Enum", "title":"Em que turnos você estuda na Universidade?",
+	{"class":"Checkbox", "title":"Em que turnos você estuda na Universidade?",
 		"box" : [
 			{"title":"Manhã"},
 			{"title":"Tarde"},
@@ -32,7 +32,7 @@
 		"box" : [
 			{"class" : "Int", "title":"Quantos dias da semana?"},
 			{"class" : "Int", "title":"Quantas horas por dia?"},
-			{"class":"Text", "title":"Em que turnos?",
+			{"class":"Checkbox", "title":"Em que turnos?",
 				"box" : [
 					{"title":"Manhã"},
 					{"title":"Tarde"},
@@ -322,4 +322,4 @@
 			{"title":"Tipo vespertino"}
 		]
 	}
-]}
+]

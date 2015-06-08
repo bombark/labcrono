@@ -27,46 +27,58 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
+
 public class MainActivity extends Activity {
 	LinearLayout body;
-	JSONObject form_all;
 	JSONArray form;
 	ArrayList<Issue> issuepkg;
-	
-    @Override
+
+	static String url_pesquisas = "ufpr.labcrono.proj1/pesquisas";
+
+			@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        
+        this.createDirIfNotExists("ufpr.labcrono.proj1");
+        this.createDirIfNotExists( this.url_pesquisas );
+        this.createDirIfNotExists("ufpr.labcrono.proj1/resultados");
         
         this.issuepkg = new ArrayList<Issue>();
         body = (LinearLayout) findViewById(R.id.body);
         
         
-        final Button button = (Button) findViewById(R.id.send);
+        final Button button = new Button(this);
+        button.setText("Enviar");
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	 //Toast.makeText(MainActivity.this, "Formulario gravado", Toast.LENGTH_SHORT).show();
-            	 
-            	 MainActivity.this.saveForm();
-            	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
-            	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
-            	 startActivity(intent);
-            	 finish();
-            	 
-
-            	 
+            	 String num = MainActivity.this.hasIssueEmpty();
+            	 if ( !num.isEmpty() ){
+            		 Toast.makeText(MainActivity.this, "Questao "+num+" nao foi respondida", Toast.LENGTH_SHORT).show();
+            	 } else {
+	            	 MainActivity.this.saveForm();
+	            	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
+	            	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
+	            	 startActivity(intent);
+	            	 finish(); 
+            	 }
             }
         });
+        this.body.addView(button);
+        
 
-        String aux = this.loadJSONFromAsset("form1.json");
+        String aux = this.loadJSONFromAsset("form.json");
         this.buildForm(aux);
+        
     }
 
     
+    
+    // Ler do arquivo, e montar a view
     @Override
     public void onResume() {
         super.onResume();
-        Log.v("log", "+ ON RESUME +");
     }
     
     @Override
@@ -107,8 +119,7 @@ public class MainActivity extends Activity {
     
     private void buildForm(String form_str){
     	try {
-        	this.form_all = new JSONObject( form_str );
-        	this.form = form_all.getJSONArray("box");
+        	this.form = new JSONArray( form_str );
         	for (int i=0; i<form.length(); i++){
         		JSONObject issue_form = form.getJSONObject(i);
         		issue_form.put( "num", Integer.toString(i+1) );
@@ -123,21 +134,7 @@ public class MainActivity extends Activity {
 
     
     
-    
-    
-    private static final int FILE_SELECT_CODE = 0;
 
-    private void showFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT); 
-        intent.setType("*/*"); 
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        try {
-            startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"),FILE_SELECT_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
-        }
-    }
     
     
     
@@ -184,15 +181,13 @@ public class MainActivity extends Activity {
     	
     	FileOutputStream outputStream;
     	File sdcard = Environment.getExternalStorageDirectory();
-    	File form_folder = new File( sdcard,"/ufpr.labcrono.proj1/result/" );
-    	form_folder.mkdirs();
+    	File form_folder = new File( sdcard,this.url_pesquisas );
     	
     	File fd_json = new File ( form_folder, this.getNewUserId(sdcard)+".json" );
     	try {
 			outputStream = new FileOutputStream( fd_json );
 			try {
-				Log.w("log","abriu o arquivo");
-				outputStream.write( this.form_all.toString().getBytes() );
+				outputStream.write( this.form.toString().getBytes() );
 				outputStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -210,10 +205,32 @@ public class MainActivity extends Activity {
     	do {
     		int i1 = r.nextInt(Integer.MAX_VALUE);
     		name = Integer.toString(i1);     	
-    		file = new File( sdcard,"/ufpr.labcrono.proj1/result/"+name);    	
+    		file = new File( sdcard,this.url_pesquisas+"/"+name);    	
     	} while ( file.exists() );
     	
     	return name;
     }
     
+    
+    
+    // Fazer a rotina retonar o numero da questao nao respondida
+    private String hasIssueEmpty(){
+    	for ( int i=0; i<this.issuepkg.size(); i++ ){
+    		String num = this.issuepkg.get(i).hasIssueEmpty();
+    		if ( !num.isEmpty() )
+    			return num;
+    	}
+    	return "";
+    }
+    
+	public static boolean createDirIfNotExists(String path) {
+	    File file = new File(Environment.getExternalStorageDirectory(), path);
+	    if (!file.exists()) {
+	        if (!file.mkdirs()) {
+	            Log.e("TravellerLog :: ", "Problem creating folder");
+	            return false;
+	        }
+	    }
+	    return true;
+	}
 }
