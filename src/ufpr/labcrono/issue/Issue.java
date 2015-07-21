@@ -1,6 +1,5 @@
-package ufpr.labcrono.proj1;
+package ufpr.labcrono.issue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
@@ -33,10 +31,9 @@ public class Issue {
 	Context context;
 	LinearLayout body;
 	
-	
-	public Issue(Context context, LinearLayout body, JSONObject issue){
-		this.context = context;
-		this.body = body;
+	public Issue(MainActivity main, JSONObject issue){
+		this.context = main;
+		this.body = main.body;
 		this.form = issue;
 		this.box  = new ArrayList<Issue>();
 		if ( !this.form.has("ishidden") ){
@@ -109,6 +106,7 @@ public class Issue {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+        this.title.setTextSize(18);
         this.body.addView(this.title);
     }
 	
@@ -161,7 +159,7 @@ public class Issue {
          */ spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				if ( arg2 == 2 ){  // sim
+				if ( arg2 == 2 ){  // simd
 					Issue.this.setSubVisibity(View.VISIBLE);
 					Issue.this.body.invalidate();
 				} else { // nao
@@ -327,6 +325,16 @@ public class Issue {
 		return "";
 	}
 	
-	
+
+	/*private String toUTF(String data){
+		if ( this.encode == Encode.ISO8559 ){
+			try {
+				return new String(data.getBytes("ISO-8859"), "UTF-16");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		return data;
+	}*/
 
 }

@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ufpr.labcrono.proj1.FinishActivity" >
+    tools:context="ufpr.labcrono.issue.FinishActivity" >
 
     <TextView
         android:layout_width="wrap_content"
