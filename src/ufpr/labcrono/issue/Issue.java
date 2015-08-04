@@ -241,6 +241,14 @@ public class Issue {
     private void buildCheckboxInput(JSONObject issue) throws JSONException {
     	LinearLayout group = new LinearLayout(this.context);
     	this.input = group;
+    	
+    	if ( issue.has("align") ){
+    		if ( issue.getString("align").equals("vertical")  )
+    			group.setOrientation(LinearLayout.VERTICAL);
+    		else
+    			group.setOrientation(LinearLayout.HORIZONTAL);
+    	}
+    	
     	JSONArray jbox = issue.getJSONArray("box");
     	for (int i=0; i<jbox.length(); i++){  	
         	CheckBox check = new CheckBox(this.context);
