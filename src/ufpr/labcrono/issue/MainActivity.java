@@ -1,4 +1,4 @@
-package ufpr.labcrono.proj1;
+package ufpr.labcrono.issue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ufpr.labcrono.issue.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -32,17 +33,22 @@ public class MainActivity extends Activity {
 	LinearLayout body;
 	JSONArray form;
 	ArrayList<Issue> issuepkg;
-
+	
+	/*public enum Encode {
+		UTF, ISO8559
+	}
+	Encode encode;*/
+	
 	static String url_pesquisas = "ufpr.labcrono.proj1/pesquisas";
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+        //this.encode = Encode.UTF;
         
         this.createDirIfNotExists("ufpr.labcrono.proj1");
-        this.createDirIfNotExists( this.url_pesquisas );
+        this.createDirIfNotExists( MainActivity.url_pesquisas );
         this.createDirIfNotExists("ufpr.labcrono.proj1/resultados");
         
         this.issuepkg = new ArrayList<Issue>();
@@ -73,9 +79,11 @@ public class MainActivity extends Activity {
         this.body.addView(button);        
     }
 
+	/*
+	@Override
+	public void onBackPressed() {
+	}*/
     
-    
-    // Ler do arquivo, e montar a view
     @Override
     public void onResume() {
         super.onResume();
@@ -123,7 +131,7 @@ public class MainActivity extends Activity {
         	for (int i=0; i<form.length(); i++){
         		JSONObject issue_form = form.getJSONObject(i);
         		issue_form.put( "num", Integer.toString(i+1) );
-        		Issue issue = new Issue(this, this.body, issue_form);
+        		Issue issue = new Issue(this, issue_form);
         		this.issuepkg.add(issue);
         	} 
 		} catch (JSONException e) {
@@ -160,7 +168,7 @@ public class MainActivity extends Activity {
                 is.close(); 
         	}
         	
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, "ISO-8859-1");
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;

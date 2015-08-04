@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ufpr.labcrono.proj1"
+    package="ufpr.labcrono.issue"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -19,15 +19,15 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="ufpr.labcrono.issue.MainActivity"
             android:label="@string/labcrono" >
         </activity>
         <activity
-            android:name=".FinishActivity"
+            android:name="ufpr.labcrono.issue.FinishActivity"
             android:label="@string/labcrono" >
         </activity>
         <activity
-            android:name=".AnimationActivity"
+            android:name="ufpr.labcrono.issue.AnimationActivity"
             android:label="@string/labcrono" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
