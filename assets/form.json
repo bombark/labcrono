@@ -3,7 +3,7 @@
 
 	{"class":"Date",    "title":"Qual sua data de nascimento?"},
 
-	{"class":"Enum", "title":"Qual é seu sexo?",
+	{"class":"Enum", "title":"Qual é seu sexo?", is_genre=true,
 		"box":[
 			{"title":"Feminino"},
 			{"title":"Masculino"}
@@ -59,7 +59,7 @@
 	},
 
 
-	{"class":"Boolean", "title":"Você se lembra qual foi a data da sua última menstruação?",
+	{"class":"Boolean", "title":"Você se lembra qual foi a data da sua última menstruação?", only_female=true,
 		"box" : [
 			{"class" : "Text", "title":"Qual?"}
 		]

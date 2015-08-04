@@ -33,7 +33,6 @@ public class Issue {
 	Context context;
 	LinearLayout body;
 	
-	
 	public Issue(Context context, LinearLayout body, JSONObject issue){
 		this.context = context;
 		this.body = body;
@@ -157,8 +156,8 @@ public class Issue {
         this.input = spinner;
         this.body.addView( spinner );
         
-        /* Executa um evento quando um novo item eh selecionado
-         */ spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        /* Executa um evento quando um novo item eh selecionado */
+        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				if ( arg2 == 2 ){  // sim
@@ -204,6 +203,31 @@ public class Issue {
     	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     	spinner.setAdapter(dataAdapter);	
         
+    	
+    	/* Quando a pergunta é sobre Genero, cria um evento para MainActivity */
+    	if ( issue.has("is_genre") ){
+    		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+    			@Override
+    			public void onItemSelected(AdapterView<?> parent, View arg1, int pos, long id) {
+    				String res = parent.getItemAtPosition(pos).toString();
+    				MainActivity main = (MainActivity) Issue.this.context;
+    				if ( res.equalsIgnoreCase("feminino") ){
+    					main.setGenre("female");
+    					Issue.this.body.invalidate();
+    				} else if (res.equalsIgnoreCase("masculino")){
+    					main.setGenre("male");
+    					Issue.this.body.invalidate();
+    				}
+    			}
+
+    			@Override
+    			public void onNothingSelected(AdapterView<?> arg0) {
+    			}
+            });
+    	}
+    	
+    	
+    	
         this.input = spinner;
         this.body.addView( spinner );
     }
@@ -328,5 +352,20 @@ public class Issue {
 	}
 	
 	
+	void setGenre(String genre){
+		if ( genre.equalsIgnoreCase("female") ){
+			if ( this.form.has("only_male") ){
+				this.setVisibity(View.GONE);
+			} else if ( this.form.has("only_female") ){
+				this.setVisibity(View.VISIBLE);
+			}
+		} else if ( genre.equalsIgnoreCase("male") ){
+			if ( this.form.has("only_female") ){
+				this.setVisibity(View.GONE);
+			} else if ( this.form.has("only_male") ){
+				this.setVisibity(View.VISIBLE);
+			}
+		}
+	}
 
 }

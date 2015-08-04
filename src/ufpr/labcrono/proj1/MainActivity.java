@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 
 	static String url_pesquisas = "ufpr.labcrono.proj1/pesquisas";
 
-			@Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -65,12 +65,12 @@ public class MainActivity extends Activity {
             	 }
             }
         });
-        this.body.addView(button);
+
         
 
         String aux = this.loadJSONFromAsset("form.json");
         this.buildForm(aux);
-        
+        this.body.addView(button);        
     }
 
     
@@ -223,7 +223,7 @@ public class MainActivity extends Activity {
     	return "";
     }
     
-	public static boolean createDirIfNotExists(String path) {
+	public boolean createDirIfNotExists(String path) {
 	    File file = new File(Environment.getExternalStorageDirectory(), path);
 	    if (!file.exists()) {
 	        if (!file.mkdirs()) {
@@ -232,5 +232,11 @@ public class MainActivity extends Activity {
 	        }
 	    }
 	    return true;
+	}
+	
+	public void setGenre(String genre){
+		for (int i=0; i<issuepkg.size(); i++){
+			this.issuepkg.get(i).setGenre(genre);
+		}
 	}
 }
