@@ -1,0 +1,4 @@
+PROJECT_NAME = 'Labcrono - Issue'
+GENERATE_HTML = YES
+HTML_OUTPUT = doc/html/
+INPUT = src/ufpr/labcrono/issue/

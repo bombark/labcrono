@@ -1,9 +1,11 @@
 [
+
+
 	{"class":"Text",    "title":"Qual seu nome?"},
 
 	{"class":"Date",    "title":"Qual sua data de nascimento?"},
 
-	{"class":"Enum", "title":"Qual é seu sexo?", is_genre=true,
+	{"class":"Enum", "title":"Qual é seu sexo?",
 		"box":[
 			{"title":"Feminino"},
 			{"title":"Masculino"}
@@ -18,7 +20,7 @@
 
 	{"class":"Text",    "title":"Qual seu email?"},
 
-	{"class":"Checkbox", "title":"Em que turnos você estuda na Universidade?","align":"vertical"
+	{"class":"Checkbox", "title":"Em que turnos você estuda na Universidade?","align":"vertical",
 		"box" : [
 			{"title":"Manhã"},
 			{"title":"Tarde"},
@@ -59,7 +61,7 @@
 	},
 
 
-	{"class":"Boolean", "title":"Você se lembra qual foi a data da sua última menstruação?", only_female=true,
+	{"class":"Boolean", "title":"Você se lembra qual foi a data da sua última menstruação?",
 		"box" : [
 			{"class" : "Text", "title":"Qual?"}
 		]
