@@ -18,7 +18,7 @@
 
 	{"class":"Text",    "title":"Qual seu email?"},
 
-	{"class":"Checkbox", "title":"Em que turnos você estuda na Universidade?",
+	{"class":"Checkbox", "title":"Em que turnos você estuda na Universidade?","align":"vertical"
 		"box" : [
 			{"title":"Manhã"},
 			{"title":"Tarde"},
