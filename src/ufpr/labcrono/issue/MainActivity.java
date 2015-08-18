@@ -67,10 +67,10 @@ public class MainActivity extends Activity {
 		}
     }
 
-	/*
+	
 	@Override
 	public void onBackPressed() {
-	}*/
+	}
     
 	/*! Evento onResume */
     @Override
@@ -83,7 +83,6 @@ public class MainActivity extends Activity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
       this.updateForm();
       savedInstanceState.putString("form_json", this.form.toString());
-      Log.w("AQUI",this.form.toString());
       super.onSaveInstanceState(savedInstanceState);  
     }
     
@@ -129,14 +128,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
+   
     /*! Constroi o visual do formulario a partir de uma string json 
      */
     protected void buildForm() {
@@ -162,7 +154,7 @@ public class MainActivity extends Activity {
 	             	 if ( !num.isEmpty() ){
 	             		 Toast.makeText(MainActivity.this, "Questao "+num+" nao foi respondida", Toast.LENGTH_SHORT).show();
 	             	 } else {
-	 	            	 MainActivity.this.saveForm("resultados/"+MainActivity.this.getNewUserId()+".json");
+	 	            	 MainActivity.this.saveForm();
 	 	            	 Intent intent = new Intent(MainActivity.this, FinishActivity.class);
 	 	            	 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
 	 	            	 startActivity(intent);
@@ -199,6 +191,7 @@ public class MainActivity extends Activity {
             	buffer = new byte[size];
                 is.read(buffer);
                 is.close();        	
+                json = new String(buffer, "ISO-8859-1");
         	} else {
             	AssetManager manager = this.getAssets();
             	InputStream is = manager.open("form.json");
@@ -206,9 +199,10 @@ public class MainActivity extends Activity {
             	buffer = new byte[size];
                 is.read(buffer);
                 is.close(); 
+                json = new String(buffer, "UTF-8");
         	}
         	
-            json = new String(buffer, "UTF-8");//"ISO-8859-1");
+
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
@@ -229,14 +223,13 @@ public class MainActivity extends Activity {
 		}
     }
     
-    public void saveForm(String file_url){
+    public void saveForm(){
     	this.updateForm();
     	
     	FileOutputStream outputStream;
     	File sdcard = Environment.getExternalStorageDirectory();
-    	File form_folder = new File( sdcard, MainActivity.url_base );
-    	
-    	File fd_json = new File ( form_folder, file_url);
+    	File form_folder = new File( sdcard, MainActivity.url_pesquisas );
+    	File fd_json = new File ( form_folder, MainActivity.this.getNewUserId()+".json" );
     	try {
 			outputStream = new FileOutputStream( fd_json );
 			try {
