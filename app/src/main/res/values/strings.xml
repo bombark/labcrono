@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Labcrono - Issue</string>
+    <string name="action_settings">Configurações</string>
+    <string name="action_exit">Sair</string>
+    <string name="title_activity_act_begin">Labcrono - Início</string>
+    <string name="title_activity_act_end">Labcrono - Obrigado!</string>
+    <string name="title_activity_act_main">Labcrono - Formulário</string>
+    <string name="title_activity_act_settings">Labcrono - Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">Formulários</string>
+    <string name="pref_header_statistics">Estatisticas</string>
+    <string name="title_activity_act_setting">ActSetting</string>
+
+
+</resources>
