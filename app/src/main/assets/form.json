@@ -1,12 +1,4 @@
-{
-  "name": "Adulto",
-
-
-  "enums":[
-  ],
-
-
-  "questions": [
+[
     {
       "class": "Text",
       "title": "Qual seu nome?"
@@ -598,5 +590,4 @@
         }
       ]
     }
-  ]
-}
+]

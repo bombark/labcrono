@@ -40,6 +40,12 @@ public class ActMain extends AppCompatActivity {
 
 		this.form = null;
 		this.formpkg = new FormPkg();
+
+		if ( form_name.equals("") ){
+			this.showError("Nenhum formulário escolhido");
+			return ;
+		}
+
 		try {
 			this.form = formpkg.load( form_name );
 			this.form.load(textformatting);
@@ -59,15 +65,14 @@ public class ActMain extends AppCompatActivity {
 			public void onClick(View view) {
 				String num = form.hasIssueEmpty();
 				if ( !num.isEmpty() ){
-					Snackbar.make(view, "Questão " + num + " nao foi respondida", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+					Snackbar.make(view, "Questão " + num + " não foi respondida", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 				} else {
-					Snackbar.make(view, "", Snackbar.LENGTH_LONG).setAction(
-						"Submeter", new View.OnClickListener() {
+					Snackbar.make(view, "", Snackbar.LENGTH_LONG).setAction("Submeter", new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-							Toast.makeText(ActMain.this, "Obrigado pela sua Contribuição", Toast.LENGTH_SHORT).show();
-							ActMain.this.form.saveForm();
-							finish();
+								Toast.makeText(ActMain.this, "Obrigado pela sua Contribuição", Toast.LENGTH_SHORT).show();
+								ActMain.this.form.saveForm();
+								finish();
 							}
 						}
 					).show();
@@ -79,9 +84,6 @@ public class ActMain extends AppCompatActivity {
 
 
 
-	@Override
-	public void onBackPressed() {
-	}
 
 
 
@@ -122,5 +124,39 @@ public class ActMain extends AppCompatActivity {
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setVisibility(View.GONE);
 	}
+
+	/*@Override
+	public void onResume() {
+		super.onResume();
+		this.buildForm();
+	}*/
+
+	/*@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		this.formpkg.savetoSavedState(this.form, savedInstanceState);
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		try {
+			this.form = this.formpkg.loadFromSavedState(savedInstanceState);
+		} catch (IOException e) {
+			this.showError("Erro de leitura - por favor entre em contato com felipebombardelli@gmail.com");
+			e.printStackTrace();
+		} catch (JSONException e) {
+			this.showError("Erro de sintaxe - por favor entre em contato com felipebombardelli@gmail.com");
+			e.printStackTrace();
+		}
+	}*/
+
+
+
+
+	@Override
+	public void onBackPressed() {
+	}
+
 
 }

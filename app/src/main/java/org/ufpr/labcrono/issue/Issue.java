@@ -125,6 +125,11 @@ public class Issue {
 	}
 
 
+
+
+
+
+
 	/*! Constroi o visual da Pergunta */
 	public String hasIssueEmpty(){
 		try {

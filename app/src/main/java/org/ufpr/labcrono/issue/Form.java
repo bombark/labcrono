@@ -1,5 +1,6 @@
 package org.ufpr.labcrono.issue;
 
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
@@ -23,7 +24,6 @@ public class Form {
 	File root;
 
 	String name;
-	JSONObject data;
 	JSONArray questions;
 	ArrayList<Issue> issuepkg;
 
@@ -50,18 +50,23 @@ public class Form {
 		is.close();
 		String json_raw = new String(buffer, textformatting); //"ISO-8859-1");
 
-		this.data = new JSONObject(json_raw);
+		this.questions = new JSONArray(json_raw);
 		this.issuepkg = new ArrayList<Issue>();
-		this.questions = this.data.getJSONArray("questions");
 	}
 
+
+
+	public void set(String json_raw) throws JSONException {
+		this.questions = new JSONArray(json_raw);
+		this.issuepkg = new ArrayList<Issue>();
+	}
 
 	/**
 	 *
 	 * @throws Exception
 	 */
 	public void render(ActMain actmain) throws Exception {
-		if ( this.data == null){
+		if ( this.questions == null){
 			throw new Exception("Nenhum Formulario para ser renderizado");
 		}
 
@@ -106,6 +111,19 @@ public class Form {
 	}
 
 
+
+	/*public void rebuildForm(){
+		for (int i=0; i<this.issuepkg.size(); i++){
+			try {
+				this.issuepkg.get(i).rebuild();
+			} catch (JSONException e) {
+				//this.showError("Não foi possivel atualizar o formulario");
+				e.printStackTrace();
+			}
+		}
+	}*/
+
+
 	/**
 	 *
 	 */
@@ -114,7 +132,7 @@ public class Form {
 		try {
 			FileOutputStream outputStream = new FileOutputStream( this.getNewResult() );
 			try {
-				outputStream.write( this.data.toString().getBytes() );
+				outputStream.write( this.questions.toString().getBytes() );
 				outputStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -142,9 +160,6 @@ public class Form {
 
 		return file;
 	}
-
-
-
 
 
 

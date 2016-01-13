@@ -1,5 +1,6 @@
 package org.ufpr.labcrono.issue;
 
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
@@ -62,6 +63,18 @@ public class FormPkg {
 	}
 
 
+	public void savetoSavedState(Form form, Bundle savedInstanceState){
+		form.updateForm();
+		savedInstanceState.putString("form_data", form.questions.toString());
+		savedInstanceState.putString("form_name", form.name);
+	}
+
+	public Form loadFromSavedState (Bundle savedInstanceState) throws IOException, JSONException {
+		Form form = this.load(savedInstanceState.getString("form_name"));
+		form.set( savedInstanceState.getString("form_data") );
+		return form;
+	}
+
 	/**
 	 *
 	 * @param path
@@ -80,39 +93,4 @@ public class FormPkg {
 
 
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	private String loadJSONFromAsset(String name) {
-		String json = "";
-		try {
-			File sdcard = Environment.getExternalStorageDirectory();
-			File fd_json = new File( sdcard, this.url_base+"/"+name );
-			byte[] buffer;
-
-			if ( fd_json.exists()) {
-				FileInputStream is = new FileInputStream (fd_json);
-				int size = is.available();
-				buffer = new byte[size];
-				is.read(buffer);
-				is.close();
-				json = new String(buffer, "ISO-8859-1");
-			} else {
-				/*AssetManager manager = actmain.getAssets();
-				InputStream is = manager.open("form.json");
-				int size = is.available();
-				buffer = new byte[size];
-				is.read(buffer);
-				is.close();
-				json = new String(buffer, "UTF-8");*/
-			}
-
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			return "";
-		}
-		return json;
-	}
 }
