@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:text="Iniciar"
         android:id="@+id/start"
-        android:layout_below="@+id/textView3"
-        android:layout_alignRight="@+id/textView3"/>
+        android:layout_below="@+id/description"
+        android:layout_alignRight="@+id/description"/>
 
     <ImageView
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Pesquisa ..."
-        android:id="@+id/textView3"
+        android:id="@+id/description"
         android:layout_alignBottom="@+id/imageView"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

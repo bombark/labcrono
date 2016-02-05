@@ -7,10 +7,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -56,8 +58,8 @@ public class FormPkg {
 		return form;
 	}
 
-	public Form load(String name) throws IOException, JSONException {
-		File form_root = new File ( this.root, name );
+	public Form load(String form_name) throws IOException, JSONException {
+		File form_root = new File ( this.root, form_name );
 		Form form = new Form(form_root);
 		return form;
 	}
@@ -71,7 +73,7 @@ public class FormPkg {
 
 	public Form loadFromSavedState (Bundle savedInstanceState) throws IOException, JSONException {
 		Form form = this.load(savedInstanceState.getString("form_name"));
-		form.set( savedInstanceState.getString("form_data") );
+		form.set(savedInstanceState.getString("form_data"));
 		return form;
 	}
 
@@ -92,5 +94,36 @@ public class FormPkg {
 	}
 
 
+	public String getFormDescription(String form_name){
+		if ( form_name.equals("") )
+			return "Selecione um formulário em Configurações";
+
+		File file = new File(this.root, form_name+"/description.txt");
+		if ( file.exists() ){
+			String ret = "";
+			try {
+				FileInputStream fin = new FileInputStream(file);
+				ret = convertStreamToString(fin);
+				fin.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return ret;
+		} else
+			return "Adicione um arquivo description.txt dentro da pasta do formulário "+form_name+" para colocar um texto aqui";
+	}
+
+
+
+	private static String convertStreamToString(InputStream is) throws Exception {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line).append("\n");
+		}
+		reader.close();
+		return sb.toString();
+	}
 
 }
