@@ -59,7 +59,7 @@ public class Issue {
 	 * @param issue_father Objeto da Issue pai
 	 * @param issue Objeto Json da Pergunta no modelo definido
 	 */
-	public Issue(Issue issue_father, JSONObject issue){
+	/*public Issue(Issue issue_father, JSONObject issue){
 		this.form = issue;
 		this.box  = new ArrayList<Issue>();
 		try {
@@ -72,7 +72,7 @@ public class Issue {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 
 
@@ -110,7 +110,6 @@ public class Issue {
 			int value = spinner.getSelectedItemPosition();
 			this.form.put("value", value);
 		} else if ( classe.equals("Checkbox") ){
-			boolean flag = false;
 			LinearLayout  group = (LinearLayout) this.input;
 			JSONArray value = new JSONArray();
 			for (int i=0; i<group.getChildCount(); i++){
@@ -231,7 +230,7 @@ public class Issue {
 	 * */
 	protected void buildTitle(JSONObject issue) throws JSONException{
 		this.title = new TextView(this.actmain);
-		this.title.setText(issue.getString("num")+". "+issue.getString("title"));
+		this.title.setText(issue.getString("num") + ". " + issue.getString("title"));
 		this.title.setTextSize(24);
 		this.body.addView(this.title);
 	}
@@ -283,7 +282,7 @@ public class Issue {
 	 *  @param issue Objeto Issue no modelo definido
 	 */
 	protected void buildBooleanInput(JSONObject issue) throws JSONException {
-		Spinner spinner = new Spinner(this.actmain);
+		final Spinner spinner = new Spinner(this.actmain);
 		List<String> list = new ArrayList<String>();
 		list.add("");
 		list.add("Não");
@@ -297,28 +296,45 @@ public class Issue {
 		}
 
 		this.input = spinner;
-		this.body.addView( spinner );
+		this.body.addView(spinner);
 
 		if ( issue.has("box") ){
 			String num_base = issue.getString("num");
 			JSONArray box = issue.getJSONArray("box");
 			for (int i=0; i<box.length(); i++){
 				JSONObject subissue_form = box.getJSONObject(i);
+
+				// Add the variables num and ishidden in the JSON
 				subissue_form.put("ishidden", true);
 				subissue_form.put( "num", num_base+"."+Integer.toString(i+1) );
-				Issue subissue = new Issue(this, subissue_form);
+
+				// Create the Sub-Issue and add in the parent box
+				Issue subissue = new Issue(subissue_form);
 				subissue.build(this.actmain);
 				this.box.add(subissue);
 			}
 		}
 
+		// Force the focus to Spinner (2016-03-04 - Bug fix)
+		//spinner.setFocusable(true);
+		spinner.setFocusableInTouchMode(true);
+		spinner.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+			@Override
+			public void onFocusChange(View v, boolean hasFocus){
+				if ( hasFocus ){
+					if ( spinner.getWindowToken() != null )
+						spinner.performClick();
+				}
+			}
+		});
 
 
 		/* Executa um evento quando um novo item eh selecionado */
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				if ( arg2 == 2 ){  // simd
+			public void onItemSelected(AdapterView<?> parent, View arg1, int arg2, long arg3) {
+				// Set visible or invisible
+				if (arg2 == 2) {  // simd
 					Issue.this.setSubVisibity(View.VISIBLE);
 					Issue.this.body.invalidate();
 				} else { // nao
@@ -340,7 +356,7 @@ public class Issue {
 	 *  @param issue Objeto Json
 	 */
 	protected void buildEnumInput(JSONObject issue) throws JSONException {
-		Spinner spinner = new Spinner(this.actmain);
+		final Spinner spinner = new Spinner(this.actmain);
 		List<String> list = new ArrayList<String>();
 		list.add( "" );
 
@@ -359,6 +375,19 @@ public class Issue {
 		if ( issue.has("value") ){
 			spinner.setSelection(issue.getInt("value"));
 		}
+
+		// Force the focus to Spinner (2016-03-04 - Bug fix)
+		//spinner.setFocusable(true);
+		spinner.setFocusableInTouchMode(true);
+		spinner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					if (spinner.getWindowToken() != null)
+						spinner.performClick();
+				}
+			}
+		});
 
 		/* Quando a pergunta é sobre Genero, cria um evento para MainActivity */
 		/*if ( issue.has("is_genre") ){
