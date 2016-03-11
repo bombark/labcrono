@@ -14,15 +14,17 @@
     tools:context="org.ufpr.labcrono.issue.ActBegin">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Iniciar"
         android:id="@+id/start"
-        android:layout_below="@+id/description"
-        android:layout_alignRight="@+id/description"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/description"
+        android:layout_marginBottom="100dp"
+        />
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
         android:src="@drawable/logo"
@@ -31,11 +33,13 @@
         />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Pesquisa ..."
         android:id="@+id/description"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:gravity="center"/>
 </RelativeLayout>

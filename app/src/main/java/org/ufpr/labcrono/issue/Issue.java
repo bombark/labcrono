@@ -232,6 +232,9 @@ public class Issue {
 		this.title = new TextView(this.actmain);
 		this.title.setText(issue.getString("num") + ". " + issue.getString("title"));
 		this.title.setTextSize(24);
+
+		this.title.setPadding(0,32,0,0);
+
 		this.body.addView(this.title);
 	}
 
